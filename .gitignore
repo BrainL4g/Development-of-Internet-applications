@@ -231,12 +231,9 @@ docker-compose.override.yml
 .docker/
 .dockerignore
 .idea/
-# Alembic cache и скомпилированные файлы
 migrations/__pycache__/
 migrations/*.pyc
-
-# SQLite база (если локальная и не нужна в репо)
 db/*.db
-
-# Если будете хранить alembic history logs
 alembic.log
+/alembic.ini
+/migrations/
