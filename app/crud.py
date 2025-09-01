@@ -1,32 +1,32 @@
 from sqlalchemy.orm import Session
-from app.models import Item
-from app.schemas import ItemCreate, ItemUpdate
+from app.models import Account
+from app.schemas import AccountCreate, AccountUpdate
 
-def get_items(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Item).offset(skip).limit(limit).all()
+def get_accounts(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Account).offset(skip).limit(limit).all()
 
-def get_item(db: Session, item_id: int):
-    return db.query(Item).filter(Item.id == item_id).first()
+def get_account(db: Session, account_id: int):
+    return db.query(Account).filter(Account.id == account_id).first()
 
-def create_item(db: Session, item: ItemCreate):
-    db_item = Item(**item.model_dump())
-    db.add(db_item)
+def create_account(db: Session, account: AccountCreate):
+    db_account = Account(**account.model_dump())
+    db.add(db_account)
     db.commit()
-    db.refresh(db_item)
-    return db_item
+    db.refresh(db_account)
+    return db_account
 
-def update_item(db: Session, item_id: int, item: ItemUpdate):
-    db_item = get_item(db, item_id)
-    if db_item:
-        for key, value in item.model_dump(exclude_unset=True).items():
-            setattr(db_item, key, value)
+def update_account(db: Session, account_id: int, account: AccountUpdate):
+    db_account = get_account(db, account_id)
+    if db_account:
+        for key, value in account.model_dump(exclude_unset=True).items():
+            setattr(db_account, key, value)
         db.commit()
-        db.refresh(db_item)
-    return db_item
+        db.refresh(db_account)
+    return db_account
 
-def delete_item(db: Session, item_id: int):
-    db_item = get_item(db, item_id)
-    if db_item:
-        db.delete(db_item)
+def delete_account(db: Session, account_id: int):
+    db_account = get_account(db, account_id)
+    if db_account:
+        db.delete(db_account)
         db.commit()
-    return db_item
+    return db_account
