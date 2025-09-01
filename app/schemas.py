@@ -1,16 +1,17 @@
 from pydantic import BaseModel
 
-class ItemBase(BaseModel):
-    name: str
-    description: str | None = None
+class AccountBase(BaseModel):
+    number: str
+    balance: float
+    owner: str | None = None
 
-class ItemCreate(ItemBase):
+class AccountCreate(AccountBase):
     pass
 
-class ItemUpdate(ItemBase):
+class AccountUpdate(AccountBase):
     pass
 
-class Item(ItemBase):
+class Account(AccountBase):
     id: int
 
     model_config = {"from_attributes": True}
