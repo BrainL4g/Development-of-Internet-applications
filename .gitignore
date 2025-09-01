@@ -205,3 +205,28 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Дополнительные логи
+*.log
+*.tmp
+*.temp
+*.pid
+# Pytest кэш
+.cache/
+.pytest_cache/
+
+# Отчёты pytest-cov
+coverage/
+*.coverage
+coverage_html_report/
+# SQLite базы данных, если используешь для локального тестирования
+*.sqlite3
+*.db
+
+# Debug-тулзы
+debug.log
+
+# Docker
+docker-compose.override.yml
+.docker/
+.dockerignore
