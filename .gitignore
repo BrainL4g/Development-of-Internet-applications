@@ -230,3 +230,4 @@ debug.log
 docker-compose.override.yml
 .docker/
 .dockerignore
+.idea/
