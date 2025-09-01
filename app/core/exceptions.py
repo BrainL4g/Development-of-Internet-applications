@@ -1,5 +1,4 @@
-class AccountNotFoundException(Exception):
-    pass
+class AccountNotFound(Exception): ...
 
-class AccountExistsException(Exception):
-    pass
+
+class AccountExists(Exception): ...
