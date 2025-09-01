@@ -40,4 +40,4 @@
 ## 🚀 Быстрый старт
 1. Клонировать репозиторий:
    ```bash
-   git clone <repo_url>
+   git clone https://github.com/BrainL4g/Development-of-Internet-applications.git
