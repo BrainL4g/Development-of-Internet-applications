@@ -1,3 +1,4 @@
+# app/main.py
 """
 Основной файл приложения FastAPI для интернет-магазина.
 
@@ -14,17 +15,17 @@ from .database import async_engine
 from . import models
 from .routers import products
 
+# Настройка логирования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
     Контекстный менеджер для управления жизненным циклом приложения.
-
+    
     Выполняет инициализацию базы данных при запуске приложения.
-
+    
     Аргументы:
         app (FastAPI): Экземпляр FastAPI приложения
     """
@@ -32,8 +33,9 @@ async def lifespan(app: FastAPI):
         # Создаем все таблицы в базе данных
         await conn.run_sync(models.Base.metadata.create_all)
     yield
+    # Здесь можно добавить код для очистки ресурсов при завершении приложения
 
-
+# Создание экземпляра FastAPI приложения
 app = FastAPI(
     title="Online Shop API",
     version="1.0.0",
@@ -49,6 +51,7 @@ app = FastAPI(
     }
 )
 
+# Добавление CORS middleware для разрешения кросс-доменных запросов
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
@@ -58,28 +61,26 @@ app.add_middleware(
     allow_origin_regex="https?://(localhost|127.0.0.1)(:[0-9]+)?",
 )
 
-# Подключение маршрутов продуктов
-app.include_router(products.router, prefix="/products", tags=["products"])
-
+# Подключение маршрутов продуктов БЕЗ префикса, так как он уже есть в роутере
+app.include_router(products.router, tags=["products"])
 
 @app.get("/", summary="Корневая конечная точка", tags=["health"])
 async def root() -> dict[str, str]:
     """
     Корневая конечная точка API.
-
+    
     Возвращает приветственное сообщение о состоянии приложения.
-
+    
     Возвращает:
         dict[str, str]: Словарь с сообщением о состоянии приложения
     """
     return {"message": "Online Shop API is running"}
 
-
 @app.get("/health", summary="Проверка состояния", tags=["health"])
 async def health_check() -> dict[str, str]:
     """
     Конечная точка для проверки состояния приложения.
-
+    
     Возвращает:
         dict[str, str]: Словарь с информацией о состоянии приложения
     """
