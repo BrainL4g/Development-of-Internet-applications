@@ -1,53 +1,49 @@
-# app/crud.py
-"""
-CRUD operations for products.
-"""
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 
 from . import models, schemas
 
 
-def get_products(db: Session, skip: int = 0, limit: int = 100) -> List[models.Product]:
-    """Retrieve a list of products with pagination."""
-    return db.query(models.Product).offset(skip).limit(limit).all()
+async def get_products(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[models.Product]:
+    result = await db.execute(
+        models.Product.__table__.select().offset(skip).limit(limit)
+    )
+    return result.scalars().all()
 
 
-def get_product(db: Session, product_id: int) -> Optional[models.Product]:
-    """Retrieve a single product by ID."""
-    return db.query(models.Product).filter(models.Product.id == product_id).first()
+async def get_product(db: AsyncSession, product_id: int) -> Optional[models.Product]:
+    result = await db.execute(
+        models.Product.__table__.select().where(models.Product.id == product_id)
+    )
+    return result.scalars().first()
 
 
-def create_product(db: Session, product: schemas.ProductCreate) -> models.Product:
-    """Create a new product."""
+async def create_product(db: AsyncSession, product: schemas.ProductCreate) -> models.Product:
     db_product = models.Product(**product.dict())
     db.add(db_product)
-    db.commit()
-    db.refresh(db_product)
+    await db.commit()
+    await db.refresh(db_product)
     return db_product
 
 
-def update_product(
-    db: Session, product_id: int, product: schemas.ProductUpdate
+async def update_product(
+        db: AsyncSession, product_id: int, product: schemas.ProductUpdate
 ) -> Optional[models.Product]:
-    """Update an existing product."""
-    db_product = get_product(db, product_id)
+    db_product = await get_product(db, product_id)
     if not db_product:
         return None
     update_data = product.dict(exclude_unset=True)
     for field, value in update_data.items():
         setattr(db_product, field, value)
-    db.commit()
-    db.refresh(db_product)
+    await db.commit()
+    await db.refresh(db_product)
     return db_product
 
 
-def delete_product(db: Session, product_id: int) -> bool:
-    """Delete a product by ID."""
-    db_product = get_product(db, product_id)
+async def delete_product(db: AsyncSession, product_id: int) -> bool:
+    db_product = await get_product(db, product_id)
     if not db_product:
         return False
-    db.delete(db_product)
-    db.commit()
+    await db.delete(db_product)
+    await db.commit()
     return True
