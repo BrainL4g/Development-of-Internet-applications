@@ -6,8 +6,6 @@ from .database import engine
 from . import models
 from .routers import products
 
-models.Base.metadata.create_all(bind=engine)
-
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -21,7 +19,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(products.router, prefix="/api/v1", tags=["products"])
+app.include_router(products.router, tags=["products"])
+
+
+@app.on_event("startup")
+async def startup() -> None:
+    async with engine.begin() as conn:
+        await conn.run_sync(models.Base.metadata.create_all)
 
 
 @app.get("/")
