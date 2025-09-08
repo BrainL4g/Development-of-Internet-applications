@@ -1,3 +1,0 @@
-"""
-Shop API package initialization.
-"""
