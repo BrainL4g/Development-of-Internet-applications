@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.product import Product
 from app.schemas.product import ProductCreate, ProductUpdate
 
+
 class ProductRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
