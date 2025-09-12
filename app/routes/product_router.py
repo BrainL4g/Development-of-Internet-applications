@@ -3,7 +3,7 @@ from typing import Annotated
 from app.schemas.product import ProductCreate, ProductRead, ProductUpdate
 from app.deps import ProductServiceDep
 
-router = APIRouter(prefix="/products", tags=["Products"])  # Вернули оригинальный префикс
+router = APIRouter(prefix="/products", tags=["Products"])
 
 @router.get("/", response_model=list[ProductRead])
 async def list_products(service: ProductServiceDep):
