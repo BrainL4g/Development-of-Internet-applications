@@ -26,5 +26,5 @@ app.include_router(product_router)
 
 
 @app.get("/health", tags=["Health"])
-async def health_check():
+async def health_check() -> dict[str, str]:
     return {"status": "ok"}

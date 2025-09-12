@@ -2,20 +2,21 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.product import Product
 from app.schemas.product import ProductCreate, ProductUpdate
+from typing import List, Optional
 
 
 class ProductRepository:
     def __init__(self, db: AsyncSession):
-        self.db = db
+        self.db: AsyncSession = db
 
-    async def get_all(self) -> list[Product]:
+    async def get_all(self) -> List[Product]:
         result = await self.db.execute(select(Product))
         return result.scalars().all()
 
-    async def get_by_id(self, product_id: int) -> Product | None:
+    async def get_by_id(self, product_id: int) -> Optional[Product]:
         return await self.db.get(Product, product_id)
 
-    async def get_by_sku(self, sku: str) -> Product | None:
+    async def get_by_sku(self, sku: str) -> Optional[Product]:
         result = await self.db.execute(select(Product).where(Product.sku == sku))
         return result.scalars().first()
 

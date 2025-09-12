@@ -2,11 +2,15 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "sqlite+aiosqlite:///./shop.db"
+    DATABASE_URL: str
     TITLE: str = "FastAPI Shop"
     VERSION: str = "0.3.0"
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore"
+    )
 
 
-settings = Settings()
+settings: Settings = Settings()

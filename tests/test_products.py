@@ -4,15 +4,18 @@ from unittest.mock import AsyncMock
 from app.main import app
 from app.deps import get_product_service
 
+
 @pytest.fixture
 def mock_service():
     return AsyncMock()
+
 
 @pytest.fixture(autouse=True)
 def override_dependency(mock_service):
     app.dependency_overrides[get_product_service] = lambda: mock_service
     yield
     app.dependency_overrides.clear()
+
 
 @pytest.mark.asyncio
 async def test_list_products(mock_service):
@@ -28,6 +31,7 @@ async def test_list_products(mock_service):
     assert r.status_code == 200
     assert r.json()[0]["title"] == "Laptop"
 
+
 @pytest.mark.asyncio
 async def test_get_product(mock_service):
     """
@@ -42,6 +46,7 @@ async def test_get_product(mock_service):
     assert r.status_code == 200
     assert r.json()["sku"] == "XYZ789"
 
+
 @pytest.mark.asyncio
 async def test_create_product(mock_service):
     """
@@ -52,9 +57,18 @@ async def test_create_product(mock_service):
         "id": 2, "title": "Tablet", "description": "iPad", "price": 700.0, "sku": "TBL999"
     }
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
-        r = await ac.post("/products/", json={"title": "Tablet", "description": "iPad", "price": 700.0, "sku": "TBL999"})
+        r = await ac.post("/products/", data={
+            "title": "Tablet",
+            "description": "iPad",
+            "price": "700.0",
+            "sku": "TBL999"
+        })
     assert r.status_code == 201
-    assert r.json()["sku"] == "TBL999"
+    assert r.json() == {
+        "id": 2, "title": "Tablet", "description": "iPad", "price": 700.0, "sku": "TBL999"
+    }
+    mock_service.create_product.assert_awaited_once()
+
 
 @pytest.mark.asyncio
 async def test_update_product(mock_service):
@@ -69,6 +83,7 @@ async def test_update_product(mock_service):
         r = await ac.put("/products/2", json={"title": "Tablet Pro", "price": 900.0})
     assert r.status_code == 200
     assert r.json()["title"] == "Tablet Pro"
+
 
 @pytest.mark.asyncio
 async def test_delete_product(mock_service):
