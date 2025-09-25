@@ -1,17 +1,16 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.core.config import settings
 from app.routes.product_router import router as product_router
 from app.db.session import engine
 from app.db.base import Base
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
-
 
 app = FastAPI(
     title=settings.TITLE,
@@ -22,8 +21,15 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-app.include_router(product_router)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+app.include_router(product_router)
 
 @app.get("/health", tags=["Health"])
 async def health_check() -> dict[str, str]:
