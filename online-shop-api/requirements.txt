@@ -1,0 +1,6 @@
+SQLAlchemy==2.0.43
+pydantic-settings==2.8.1
+fastapi==0.115.11
+alembic==1.16.5
+pydantic==2.10.6
+typer==0.15.4

@@ -1,30 +1,59 @@
 import React, { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 import ProductCard from './ProductCard';
 import ProductForm from './ProductForm';
+
+const API_URL = 'http://localhost:8000/products';
 
 function ProductList() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    setProducts([
-      { id: uuidv4(), name: 'iPhone 15 Pro', description: 'Флагманский смартфон Apple', price: 129990, stock: 10 },
-      { id: uuidv4(), name: 'Samsung Galaxy S24 Ultra', description: 'Топовый Android-смартфон', price: 119990, stock: 8 },
-      { id: uuidv4(), name: 'MacBook Air M3', description: 'Лёгкий и мощный ноутбук', price: 149990, stock: 5 },
-      { id: uuidv4(), name: 'Sony WH-1000XM5', description: 'Премиальные наушники с ANC', price: 34990, stock: 20 },
-    ]);
+    fetchProducts();
   }, []);
 
-  const addProduct = (data) => {
-    setProducts(prev => [...prev, { id: uuidv4(), ...data }]);
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      setProducts(response.data);
+    } catch (error) {
+      console.error('Ошибка загрузки товаров:', error);
+    }
   };
 
-  const updateProduct = (updated) => {
-    setProducts(prev => prev.map(p => p.id === updated.id ? updated : p));
+  const addProduct = async (data) => {
+    const formData = new FormData();
+    formData.append('name', data.name);
+    if (data.description) formData.append('description', data.description);
+    formData.append('price', data.price);
+    formData.append('stock', data.stock);
+
+    try {
+      await axios.post(API_URL, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      fetchProducts();
+    } catch (error) {
+      console.error('Ошибка добавления товара:', error);
+    }
   };
 
-  const deleteProduct = (id) => {
-    setProducts(prev => prev.filter(p => p.id !== id));
+  const updateProduct = async (updated) => {
+    try {
+      await axios.put(`${API_URL}/${updated.id}`, updated);
+      fetchProducts();
+    } catch (error) {
+      console.error('Ошибка обновления товара:', error);
+    }
+  };
+
+  const deleteProduct = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      fetchProducts();
+    } catch (error) {
+      console.error('Ошибка удаления товара:', error);
+    }
   };
 
   return (

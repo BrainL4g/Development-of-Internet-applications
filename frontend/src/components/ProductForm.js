@@ -36,9 +36,9 @@ function ProductForm({ product, onSubmit, onCancel }) {
       <input name="name" placeholder="Название *" value={form.name} onChange={handleChange} required />
       <textarea name="description" placeholder="Описание" value={form.description} onChange={handleChange} />
       <input name="price" type="number" placeholder="Цена *" value={form.price} onChange={handleChange} required />
-      <input name="stock" type="number" placeholder="Количество на складе" value={form.stock} onChange={handleChange} min="0" />
+      <input name="stock" type="number" placeholder="На складе" value={form.stock} onChange={handleChange} min="0" />
       <div className="form-buttons">
-        <button type="submit">{product ? 'Сохранить изменения' : 'Добавить товар'}</button>
+        <button type="submit">{product ? 'Сохранить' : 'Добавить'}</button>
         {onCancel && <button type="button" onClick={onCancel}>Отмена</button>}
       </div>
     </form>
